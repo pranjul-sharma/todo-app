@@ -1,14 +1,24 @@
 import React from 'react';
 import './TodoTask.css';
+import { connect } from 'react-redux';
+import { deleteTodo, toggleTodo } from '../../store/actions/todoActions';
 
 class TodoTask extends React.Component {
+  handleCheckChange = () => {
+    this.props.toggleTodo(this.props.task.id);
+  };
+
+  handleDeleteClick = () => {
+    this.props.deleteTodo(this.props.task.id);
+  };
+
   render() {
     return (
       <div className="container">
         <input
           type="checkbox"
           checked={this.props.task.isCompleted}
-          onChange={() => this.props.handleCheckChange(this.props.task.id)}
+          onChange={this.handleCheckChange}
         />
         {this.props.task.isCompleted ? (
           <h5>
@@ -17,10 +27,14 @@ class TodoTask extends React.Component {
         ) : (
           <h5>{this.props.task.task}</h5>
         )}
-        <button onClick={this.props.handleDeleteClick}>Clear</button>
+        <button onClick={this.handleDeleteClick}>Clear</button>
       </div>
     );
   }
 }
 
-export default TodoTask;
+const mapStateToProps = state => ({ tasks: state.todos.tasks });
+export default connect(
+  mapStateToProps,
+  { deleteTodo, toggleTodo }
+)(TodoTask);
